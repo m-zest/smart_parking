@@ -3,8 +3,8 @@
   "outputDirectory": "frontend/dist",
   "framework": null,
   "installCommand": "echo 'skipping root install'",
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
