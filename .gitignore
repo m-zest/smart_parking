@@ -11,6 +11,10 @@ __pycache__/
 # Images
 images/
 
+# Node
+node_modules/
+dist/
+
 # OS files
 .DS_Store
 Thumbs.db
