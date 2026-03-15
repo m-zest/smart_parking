@@ -75,8 +75,12 @@ This installs all dependencies, creates the database, and seeds it with demo dat
 ```bash
 cd backend
 
-# Install Python dependencies
+# Install core Python dependencies
 pip install -r requirements.txt
+
+# (Optional) Install ML libraries for license plate detection (Upload Image page)
+# This is ~2GB and only needed if you want to use the AI plate detection feature
+pip install opencv-python-headless easyocr ultralytics numpy
 
 # Create the database
 python scripts/db_create.py
@@ -91,6 +95,11 @@ uvicorn app.main:app --reload
 ```
 
 Backend runs at **http://localhost:8000**
+
+> **Note:** All features work without the ML libraries. Only the Upload Image page
+> (license plate OCR detection) requires `opencv-python-headless`, `easyocr`,
+> `ultralytics`, and `numpy`. If not installed, you will see a "No module named cv2"
+> error when trying to detect a plate — everything else still works fine.
 
 ### Step 2: Frontend
 
@@ -136,8 +145,13 @@ Once both servers are running, open **http://localhost:5173** and test each page
 - Upload a photo of a license plate
 - The AI (YOLOv8 + EasyOCR) detects the plate number
 - If valid, you can immediately start a parking session
-- **Note**: requires ML dependencies installed (`opencv`, `easyocr`, `ultralytics`)
+- **Requires ML libraries** — you must install them first:
+  ```bash
+  pip install opencv-python-headless easyocr ultralytics numpy
+  ```
+- Without these libraries, you'll get a "No module named cv2" error
 - The YOLOv8 model (`yolov8n.pt`) downloads automatically on first use (~6MB)
+- This feature does **not** work on Vercel (libraries too large for serverless)
 
 ### 6. Reports (`/reports`)
 - Bar chart: revenue breakdown by zone
