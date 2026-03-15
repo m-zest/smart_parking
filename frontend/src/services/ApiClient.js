@@ -165,6 +165,52 @@ const ApiClient = {
     }
     return res.json();
   },
+
+  // ── Payments ──
+  async paySessions(sessionIds) {
+    const res = await fetch(`${BASE_URL}/payments/pay`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_ids: sessionIds }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Payment failed");
+    }
+    return res.json();
+  },
+
+  async payAllByPlate(plateNumber) {
+    const res = await fetch(`${BASE_URL}/payments/pay-all`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plate_number: plateNumber }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Payment failed");
+    }
+    return res.json();
+  },
+
+  async getUnpaidSessions(plateNumber) {
+    const res = await fetch(`${BASE_URL}/payments/unpaid/${plateNumber}`);
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async checkPenalty(plateNumber) {
+    const res = await fetch(`${BASE_URL}/payments/check-penalty/${plateNumber}`);
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  // ── Congestion / Map ──
+  async getCongestion() {
+    const res = await fetch(`${BASE_URL}/payments/congestion`);
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
 };
 
 export default ApiClient;

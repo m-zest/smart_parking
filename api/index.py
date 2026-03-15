@@ -11,6 +11,7 @@ from app.api.zone_controller import router as zone_router  # noqa: E402
 from app.api.report_controller import router as report_router  # noqa: E402
 from app.api.vehicle_controller import router as vehicle_router  # noqa: E402
 from app.api.upload_controller import router as upload_router  # noqa: E402
+from app.api.payment_controller import router as payment_router  # noqa: E402
 
 app = FastAPI(title="Smart Parking System")
 
@@ -28,6 +29,7 @@ app.include_router(zone_router, prefix="/api")
 app.include_router(report_router, prefix="/api")
 app.include_router(vehicle_router, prefix="/api")
 app.include_router(upload_router, prefix="/api")
+app.include_router(payment_router, prefix="/api")
 
 
 @app.get("/api/health")
