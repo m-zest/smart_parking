@@ -69,9 +69,42 @@ def _init_db():
         repeat_penalty INTEGER,
         final_fee INTEGER,
         status TEXT NOT NULL,
+        user_id TEXT,
         FOREIGN KEY (plate_number) REFERENCES vehicles(plate_number),
         FOREIGN KEY (zone_id) REFERENCES zones(zone_id)
     )""")
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        user_id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'user',
+        created_at TEXT NOT NULL
+    )""")
+
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS payments (
+        payment_id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        session_id TEXT NOT NULL,
+        amount INTEGER NOT NULL,
+        cardholder_name TEXT,
+        card_last_four TEXT,
+        payment_timestamp TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'success',
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        FOREIGN KEY (session_id) REFERENCES parking_sessions(session_id)
+    )""")
+
+    # Seed a default admin user (password: admin123)
+    import hashlib
+    admin_pw = hashlib.sha256("admin123".encode()).hexdigest()
+    cur.execute("""
+        INSERT OR IGNORE INTO users (user_id, name, email, password, role, created_at)
+        VALUES (?, ?, ?, ?, ?, ?)
+    """, ("admin-001", "Admin", "admin@smartparking.hu", admin_pw, "admin", datetime.now().isoformat()))
 
     # ── Seed zones ──
     zones = [

@@ -1,6 +1,51 @@
 const BASE_URL = import.meta.env.DEV ? "http://localhost:8000" : "/api";
 
 const ApiClient = {
+  // ── Auth ──
+  async register(name, email, password, adminCode = "") {
+    const res = await fetch(`${BASE_URL}/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password, admin_code: adminCode }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Registration failed");
+    }
+    return res.json();
+  },
+
+  async login(email, password) {
+    const res = await fetch(`${BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Login failed");
+    }
+    return res.json();
+  },
+
+  async listUsers() {
+    const res = await fetch(`${BASE_URL}/auth/users`);
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async getUser(userId) {
+    const res = await fetch(`${BASE_URL}/auth/users/${userId}`);
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async getUsersSummary() {
+    const res = await fetch(`${BASE_URL}/auth/users-summary`);
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
   // ── Health ──
   async healthCheck() {
     const res = await fetch(`${BASE_URL}/health`);
@@ -167,11 +212,16 @@ const ApiClient = {
   },
 
   // ── Payments ──
-  async paySessions(sessionIds) {
+  async paySessions(sessionIds, userId = "", cardholderName = "", cardLastFour = "") {
     const res = await fetch(`${BASE_URL}/payments/pay`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_ids: sessionIds }),
+      body: JSON.stringify({
+        session_ids: sessionIds,
+        user_id: userId,
+        cardholder_name: cardholderName,
+        card_last_four: cardLastFour,
+      }),
     });
     if (!res.ok) {
       const err = await res.json();
@@ -180,11 +230,16 @@ const ApiClient = {
     return res.json();
   },
 
-  async payAllByPlate(plateNumber) {
+  async payAllByPlate(plateNumber, userId = "", cardholderName = "", cardLastFour = "") {
     const res = await fetch(`${BASE_URL}/payments/pay-all`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ plate_number: plateNumber }),
+      body: JSON.stringify({
+        plate_number: plateNumber,
+        user_id: userId,
+        cardholder_name: cardholderName,
+        card_last_four: cardLastFour,
+      }),
     });
     if (!res.ok) {
       const err = await res.json();
@@ -201,6 +256,12 @@ const ApiClient = {
 
   async checkPenalty(plateNumber) {
     const res = await fetch(`${BASE_URL}/payments/check-penalty/${plateNumber}`);
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async getPaymentHistory(userId) {
+    const res = await fetch(`${BASE_URL}/payments/history/${userId}`);
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   },

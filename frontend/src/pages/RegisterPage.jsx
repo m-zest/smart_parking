@@ -3,11 +3,14 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import ApiClient from "../services/ApiClient";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const { loginUser } = useAuth();
   const navigate = useNavigate();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminCode, setAdminCode] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -16,7 +19,7 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      const user = await ApiClient.login(email, password);
+      const user = await ApiClient.register(name, email, password, isAdmin ? adminCode : "");
       loginUser(user);
       navigate(user.role === "admin" ? "/" : "/driver");
     } catch (e) {
@@ -37,12 +40,24 @@ export default function LoginPage() {
             <path d="M3 15h6" />
           </svg>
           <h1>Smart Parking</h1>
-          <p>Sign in to your account</p>
+          <p>Create a new account</p>
         </div>
 
         {error && <div className="alert alert--error">{error}</div>}
 
         <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              className="input"
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              autoFocus
+            />
+          </div>
           <div className="form-group">
             <label>Email</label>
             <input
@@ -52,7 +67,6 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoFocus
             />
           </div>
           <div className="form-group">
@@ -60,19 +74,49 @@ export default function LoginPage() {
             <input
               type="password"
               className="input"
-              placeholder="Enter your password"
+              placeholder="Create a password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={6}
             />
           </div>
+
+          <div className="form-group" style={{ marginTop: "12px" }}>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={isAdmin}
+                onChange={(e) => setIsAdmin(e.target.checked)}
+              />
+              <span>Register as Admin</span>
+            </label>
+          </div>
+
+          {isAdmin && (
+            <div className="form-group">
+              <label>Admin Authorization Code</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="Enter admin code"
+                value={adminCode}
+                onChange={(e) => setAdminCode(e.target.value)}
+                required={isAdmin}
+              />
+              <small className="text-muted" style={{ marginBottom: 0 }}>
+                Contact system administrator for the authorization code
+              </small>
+            </div>
+          )}
+
           <button type="submit" className="btn btn--primary btn--lg" style={{ width: "100%" }} disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Creating account..." : "Register"}
           </button>
         </form>
 
         <div className="login-footer">
-          <p>Don't have an account? <Link to="/register">Register here</Link></p>
+          <p>Already have an account? <Link to="/login">Sign in</Link></p>
           <p><Link to="/">Back to home</Link></p>
         </div>
       </div>
