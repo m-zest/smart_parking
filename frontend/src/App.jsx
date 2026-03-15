@@ -1,14 +1,47 @@
-import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { BrowserRouter, Routes, Route, NavLink, Navigate } from "react-router-dom";
 import { useState } from "react";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import DriverDashboardPage from "./pages/DriverDashboardPage";
 import SessionsPage from "./pages/SessionsPage";
 import ZoneConfigPage from "./pages/ZoneConfigPage";
 import UploadImagePage from "./pages/UploadImagePage";
 import ReportsPage from "./pages/ReportsPage";
+import LoginPage from "./pages/LoginPage";
+
+function TopBar() {
+  const { user, logout } = useAuth();
+  if (!user) return null;
+
+  return (
+    <div className="topbar">
+      <div className="topbar__left">
+        <span className="topbar__greeting">Welcome, {user.name}</span>
+        <span className={`badge badge--${user.role === "admin" ? "active" : "paid"}`}>
+          {user.role}
+        </span>
+      </div>
+      <div className="topbar__right">
+        <div className="profile-icon" title={user.name}>
+          {user.name.charAt(0).toUpperCase()}
+        </div>
+        <button className="btn btn--sm btn--outline topbar__logout" onClick={logout}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          Logout
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function Sidebar({ collapsed, onToggle }) {
-  const links = [
+  const { user } = useAuth();
+
+  const adminLinks = [
     { to: "/", label: "Admin Dashboard", icon: "grid" },
     { to: "/driver", label: "Driver Dashboard", icon: "user" },
     { to: "/sessions", label: "Sessions", icon: "clock" },
@@ -16,6 +49,14 @@ function Sidebar({ collapsed, onToggle }) {
     { to: "/upload", label: "Upload Image", icon: "camera" },
     { to: "/reports", label: "Reports", icon: "bar-chart" },
   ];
+
+  const driverLinks = [
+    { to: "/driver", label: "My Dashboard", icon: "user" },
+    { to: "/sessions", label: "Sessions", icon: "clock" },
+    { to: "/upload", label: "Upload Image", icon: "camera" },
+  ];
+
+  const links = user?.role === "admin" ? adminLinks : driverLinks;
 
   return (
     <aside className={`sidebar ${collapsed ? "sidebar--collapsed" : ""}`}>
@@ -120,27 +161,51 @@ function SidebarIcon({ name }) {
   );
 }
 
-export default function App() {
+function AuthenticatedApp() {
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuth();
 
   return (
-    <BrowserRouter>
-      <div className="app">
-        <Sidebar
-          collapsed={collapsed}
-          onToggle={() => setCollapsed(!collapsed)}
-        />
-        <main className="main-content">
-          <Routes>
+    <div className="app">
+      <Sidebar
+        collapsed={collapsed}
+        onToggle={() => setCollapsed(!collapsed)}
+      />
+      <main className="main-content">
+        <TopBar />
+        <Routes>
+          {user?.role === "admin" ? (
             <Route path="/" element={<AdminDashboardPage />} />
-            <Route path="/driver" element={<DriverDashboardPage />} />
-            <Route path="/sessions" element={<SessionsPage />} />
-            <Route path="/zones" element={<ZoneConfigPage />} />
-            <Route path="/upload" element={<UploadImagePage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-          </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
+          ) : (
+            <Route path="/" element={<Navigate to="/driver" replace />} />
+          )}
+          <Route path="/driver" element={<DriverDashboardPage />} />
+          <Route path="/sessions" element={<SessionsPage />} />
+          <Route path="/zones" element={<ZoneConfigPage />} />
+          <Route path="/upload" element={<UploadImagePage />} />
+          <Route path="/reports" element={<ReportsPage />} />
+        </Routes>
+      </main>
+    </div>
   );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
+  const { user } = useAuth();
+
+  if (!user) {
+    return <LoginPage />;
+  }
+
+  return <AuthenticatedApp />;
 }

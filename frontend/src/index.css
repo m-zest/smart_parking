@@ -652,6 +652,256 @@ select.input {
   margin-bottom: 16px;
 }
 
+/* ── Login Page ── */
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.login-card {
+  background: var(--color-surface);
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.login-logo svg {
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.login-logo h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.login-logo p {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.login-card .form-group {
+  margin-bottom: 16px;
+}
+
+.login-card .btn--lg {
+  margin-top: 8px;
+}
+
+/* ── Top Bar ── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar__greeting {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar__logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Profile Icon ── */
+.profile-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-active));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+/* ── Page Header Row ── */
+.page-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.page-header-row h1 {
+  margin-bottom: 0;
+}
+
+/* ── Auto Refresh Indicator ── */
+.auto-refresh-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.auto-refresh-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Map ── */
+.map-container {
+  margin-bottom: 12px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.map-legend {
+  display: flex;
+  gap: 20px;
+  padding: 8px 0;
+}
+
+.map-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+}
+
+.map-legend__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.map-popup {
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+/* ── Congestion Cards ── */
+.congestion-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.congestion-card {
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  text-align: center;
+  background: var(--color-surface);
+}
+
+.congestion-card--low {
+  border-left: 4px solid var(--color-success);
+}
+
+.congestion-card--medium {
+  border-left: 4px solid var(--color-warning);
+}
+
+.congestion-card--high {
+  border-left: 4px solid var(--color-danger);
+}
+
+.congestion-card__zone {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.congestion-card__name {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.congestion-card__count {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.congestion-card__level {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+.congestion-card__level--low { color: var(--color-success); }
+.congestion-card__level--medium { color: var(--color-warning); }
+.congestion-card__level--high { color: var(--color-danger); }
+
+/* ── Penalty Alert ── */
+.penalty-alert {
+  border-color: var(--color-danger);
+  background: #fef2f2;
+}
+
+.penalty-alert strong {
+  font-size: 1rem;
+  display: block;
+  margin-bottom: 8px;
+  color: var(--color-danger);
+}
+
+.penalty-alert p {
+  margin-bottom: 8px;
+}
+
+.penalty-legal {
+  font-size: 0.8rem;
+  color: #7f1d1d;
+  font-style: italic;
+  border-top: 1px solid #fecaca;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .sidebar {
@@ -687,10 +937,39 @@ select.input {
   .card-grid {
     grid-template-columns: 1fr 1fr;
   }
+
+  .topbar {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .page-header-row {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .congestion-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .map-legend {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 }
 
 @media (max-width: 480px) {
   .card-grid {
     grid-template-columns: 1fr;
+  }
+
+  .congestion-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .login-card {
+    padding: 24px;
   }
 }

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
+
 
 class ZoneCreate(BaseModel):
     zone_id: str
@@ -20,3 +21,11 @@ class SessionCreate(BaseModel):
 
 class SessionClose(BaseModel):
     exit_timestamp: Optional[str] = None
+
+
+class PaymentRequest(BaseModel):
+    session_ids: List[str]
+
+
+class PaymentByPlateRequest(BaseModel):
+    plate_number: str
