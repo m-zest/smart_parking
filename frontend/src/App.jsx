@@ -1,13 +1,18 @@
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from "react-router-dom";
 import { useState } from "react";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import LandingPage from "./pages/LandingPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import DriverDashboardPage from "./pages/DriverDashboardPage";
 import SessionsPage from "./pages/SessionsPage";
 import ZoneConfigPage from "./pages/ZoneConfigPage";
 import UploadImagePage from "./pages/UploadImagePage";
 import ReportsPage from "./pages/ReportsPage";
-import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
+import PaymentPage from "./pages/PaymentPage";
+import UsersPage from "./pages/UsersPage";
 
 function TopBar() {
   const { user, logout } = useAuth();
@@ -22,9 +27,9 @@ function TopBar() {
         </span>
       </div>
       <div className="topbar__right">
-        <div className="profile-icon" title={user.name}>
+        <NavLink to="/profile" className="profile-icon" title="My Profile">
           {user.name.charAt(0).toUpperCase()}
-        </div>
+        </NavLink>
         <button className="btn btn--sm btn--outline topbar__logout" onClick={logout}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -43,17 +48,22 @@ function Sidebar({ collapsed, onToggle }) {
 
   const adminLinks = [
     { to: "/", label: "Admin Dashboard", icon: "grid" },
-    { to: "/driver", label: "Driver Dashboard", icon: "user" },
+    { to: "/users", label: "Users", icon: "users" },
+    { to: "/driver", label: "Driver View", icon: "user" },
     { to: "/sessions", label: "Sessions", icon: "clock" },
     { to: "/zones", label: "Zone Config", icon: "map" },
     { to: "/upload", label: "Upload Image", icon: "camera" },
     { to: "/reports", label: "Reports", icon: "bar-chart" },
+    { to: "/payment", label: "Payment", icon: "credit-card" },
+    { to: "/profile", label: "Profile", icon: "profile" },
   ];
 
   const driverLinks = [
     { to: "/driver", label: "My Dashboard", icon: "user" },
     { to: "/sessions", label: "Sessions", icon: "clock" },
     { to: "/upload", label: "Upload Image", icon: "camera" },
+    { to: "/payment", label: "Payment", icon: "credit-card" },
+    { to: "/profile", label: "Profile", icon: "profile" },
   ];
 
   const links = user?.role === "admin" ? adminLinks : driverLinks;
@@ -116,6 +126,14 @@ function SidebarIcon({ name }) {
         <circle cx="12" cy="7" r="4" />
       </>
     ),
+    users: (
+      <>
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </>
+    ),
     clock: (
       <>
         <circle cx="12" cy="12" r="10" />
@@ -140,6 +158,18 @@ function SidebarIcon({ name }) {
         <line x1="12" y1="20" x2="12" y2="10" />
         <line x1="18" y1="20" x2="18" y2="4" />
         <line x1="6" y1="20" x2="6" y2="16" />
+      </>
+    ),
+    "credit-card": (
+      <>
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+        <line x1="1" y1="10" x2="23" y2="10" />
+      </>
+    ),
+    profile: (
+      <>
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
       </>
     ),
   };
@@ -184,6 +214,9 @@ function AuthenticatedApp() {
           <Route path="/zones" element={<ZoneConfigPage />} />
           <Route path="/upload" element={<UploadImagePage />} />
           <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/users" element={<UsersPage />} />
         </Routes>
       </main>
     </div>
@@ -203,9 +236,15 @@ export default function App() {
 function AppContent() {
   const { user } = useAuth();
 
-  if (!user) {
-    return <LoginPage />;
-  }
+  return (
+    <Routes>
+      {/* Public routes */}
+      <Route path="/landing" element={user ? <Navigate to="/" replace /> : <LandingPage />} />
+      <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
+      <Route path="/register" element={user ? <Navigate to="/" replace /> : <RegisterPage />} />
 
-  return <AuthenticatedApp />;
+      {/* Protected routes */}
+      <Route path="/*" element={user ? <AuthenticatedApp /> : <Navigate to="/landing" replace />} />
+    </Routes>
+  );
 }

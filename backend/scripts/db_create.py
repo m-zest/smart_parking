@@ -51,8 +51,42 @@ def main():
         repeat_penalty INTEGER,
         final_fee INTEGER,
         status TEXT NOT NULL,
+        user_id TEXT,
         FOREIGN KEY (plate_number) REFERENCES vehicles(plate_number),
-        FOREIGN KEY (zone_id) REFERENCES zones(zone_id)
+        FOREIGN KEY (zone_id) REFERENCES zones(zone_id),
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+    )
+    """)
+
+    # =========================
+    # USERS TABLE
+    # =========================
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        user_id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'user',
+        created_at TEXT NOT NULL
+    )
+    """)
+
+    # =========================
+    # PAYMENTS TABLE
+    # =========================
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS payments (
+        payment_id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        session_id TEXT NOT NULL,
+        amount INTEGER NOT NULL,
+        cardholder_name TEXT,
+        card_last_four TEXT,
+        payment_timestamp TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'success',
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+        FOREIGN KEY (session_id) REFERENCES parking_sessions(session_id)
     )
     """)
 
